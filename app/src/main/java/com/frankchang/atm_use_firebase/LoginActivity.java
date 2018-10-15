@@ -1,9 +1,17 @@
 package com.frankchang.atm_use_firebase;
 
+import android.content.DialogInterface;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -30,16 +38,41 @@ public class LoginActivity extends AppCompatActivity {
     // Login
     public void loginOnClick(View view) {
         // 取值
-        String userID = etUserId.getText().toString();
-        String userPW = etPassWord.getText().toString();
+        final String userID = etUserId.getText().toString();
+        final String userPW = etPassWord.getText().toString();
 
         // 判斷是否登入成功
-        if ("frank".equals(userID) && "123".equals(userPW)) {
-            closePage(RESULT_OK);
+        FirebaseDatabase.getInstance().getReference("users").child(userID).child("password")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String pw = (String) dataSnapshot.getValue();
+                        assert pw != null;
+                        if (pw.equals(userPW)) {
+                            // 成功
+                            closePage(RESULT_OK);
 
-        } else {
-            closePage(RESULT_CANCELED);
-        }
+                        } else {
+                            // 失敗
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setIcon(R.mipmap.ic_launcher)
+                                    .setTitle("登入")
+                                    .setMessage("登入失敗！")
+                                    .setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            closePage(RESULT_CANCELED);
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // 未使用
+                    }
+                });
     }
 
     // Quit
