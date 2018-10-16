@@ -90,4 +90,14 @@
         app:layout_constraintStart_toEndOf="@+id/btnLogin"
         app:layout_constraintTop_toTopOf="@+id/btnLogin" />
 
+    <CheckBox
+        android:id="@+id/chkRemember"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:checked="true"
+        android:text="記住帳號"
+        app:layout_constraintBottom_toBottomOf="@+id/etUserId"
+        app:layout_constraintStart_toEndOf="@+id/etUserId" />
+
 </android.support.constraint.ConstraintLayout>

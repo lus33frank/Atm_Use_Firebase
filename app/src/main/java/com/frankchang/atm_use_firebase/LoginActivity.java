@@ -1,11 +1,14 @@
 package com.frankchang.atm_use_firebase;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.google.firebase.database.DataSnapshot;
@@ -16,9 +19,13 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // 畫面元件
+    private static final String USER_ID = "UserId";
+    private static final String REMEMBER_ID = "RememberId";
     private EditText etUserId;
     private EditText etPassWord;
+    private CheckBox chkRemember;
+    private SharedPreferences sp;
+    private boolean isInit = true;
 
 
     @Override
@@ -26,13 +33,40 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        sp = getSharedPreferences("ATM", MODE_PRIVATE);
+
         findViews();    // 畫面元件連結
+        initData();     // 初始化資料
     }
 
     // 畫面元件連結
     private void findViews() {
         etUserId = findViewById(R.id.etUserId);
         etPassWord = findViewById(R.id.etPassWord);
+        chkRemember = findViewById(R.id.chkRemember);
+        chkRemember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isInit) {
+                    sp.edit().putBoolean(REMEMBER_ID, isChecked).apply();
+                }
+            }
+        });
+    }
+
+    // 初始化資料
+    private void initData() {
+        boolean isCkeck = sp.getBoolean(REMEMBER_ID, true);
+        chkRemember.setChecked(isCkeck);
+
+        if (isCkeck) {
+            String userid = sp.getString(USER_ID, "");
+            etUserId.setText(userid);
+        } else {
+            etUserId.setText("");
+        }
+
+        isInit = false;
     }
 
     // Login
@@ -50,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                         assert pw != null;
                         if (pw.equals(userPW)) {
                             // 成功
+                            sp.edit().putString(USER_ID, userID).commit();
                             closePage(RESULT_OK);
 
                         } else {
@@ -77,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Quit
     public void quitOnClick(View view) {
-        closePage(RESULT_CANCELED);
+        closePage(RESULT_FIRST_USER);
     }
 
     // 設定回傳值，關閉頁面

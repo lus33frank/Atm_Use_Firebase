@@ -50,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_LOGIN) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "登入成功！", Toast.LENGTH_SHORT).show();
-            } else {
+            } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "登入失敗！", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
                 finish();
             }
         }
