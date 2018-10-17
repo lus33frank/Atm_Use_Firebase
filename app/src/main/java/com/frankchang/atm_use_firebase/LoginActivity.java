@@ -1,8 +1,14 @@
 package com.frankchang.atm_use_firebase;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String USER_ID = "UserId";
     private static final String REMEMBER_ID = "RememberId";
+    private static final int REQUEST_CODE_CAMERA = 5;
     private EditText etUserId;
     private EditText etPassWord;
     private CheckBox chkRemember;
@@ -33,10 +40,43 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // 檢查是否有相機權限
+        int permission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            // 開啟相機
+            takePhoto();
+
+        } else {
+            // 詢問開啟權限
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
+        }
+
         sp = getSharedPreferences("ATM", MODE_PRIVATE);
 
         findViews();    // 畫面元件連結
         initData();     // 初始化資料
+    }
+
+    // 開啟相機
+    private void takePhoto() {
+        // 有！呼叫開啟相機
+        //startActivity(new Intent(MediaStore.ACTION_IMAGE_CAPTURE));
+    }
+
+    // 詢問權限回覆處理
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 開啟相機
+                takePhoto();
+            }
+        }
     }
 
     // 畫面元件連結
