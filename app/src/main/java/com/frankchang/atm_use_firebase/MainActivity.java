@@ -145,15 +145,20 @@ public class MainActivity extends AppCompatActivity {
     private void itemClicked(Function function) {
         switch (function.getIcon()) {
             case R.drawable.func_transaction:
+                startActivity(new Intent(this, TransActivity.class));
                 break;
+
             case R.drawable.func_balance:
                 break;
+
             case R.drawable.func_finance:
                 startActivity(new Intent(this, FinanceActivity.class));
                 break;
+
             case R.drawable.func_contacts:
                 startActivity(new Intent(this, ContactActivity.class));
                 break;
+
             case R.drawable.func_exit:
                 finish();
                 break;
