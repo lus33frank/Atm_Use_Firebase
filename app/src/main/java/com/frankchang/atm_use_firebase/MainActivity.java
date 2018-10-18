@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             case R.drawable.func_finance:
                 break;
             case R.drawable.func_contacts:
+                startActivity(new Intent(this, ContactActivity.class));
                 break;
             case R.drawable.func_exit:
                 finish();

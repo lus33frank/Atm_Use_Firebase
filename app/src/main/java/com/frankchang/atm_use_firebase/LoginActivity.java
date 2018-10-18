@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         //startActivity(new Intent(MediaStore.ACTION_IMAGE_CAPTURE));
     }
 
-    // 詢問權限回覆處理
+    // 詢問授權回覆處理
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
