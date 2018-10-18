@@ -12,10 +12,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,7 @@ public class ContactActivity extends AppCompatActivity {
     // 常數
     private static final int REQUEST_CONTACT = 10;
     private RecyclerView contactList;
+    private List<Contact> contacts;
 
 
     @Override
@@ -62,7 +67,7 @@ public class ContactActivity extends AppCompatActivity {
                 null, null, null, null);
 
         // 取得資料
-        List<Contact> contacts = new ArrayList<>();
+        contacts = new ArrayList<>();
         while (cursor.moveToNext()) {
             // 編號
             int id = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -163,4 +168,24 @@ public class ContactActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_contact, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_upload) {
+            String userid = getSharedPreferences("ATM", MODE_PRIVATE)
+                    .getString("UserId", null);
+            if (userid != null) {
+                FirebaseDatabase.getInstance().getReference("users")
+                        .child(userid).child("contacts")
+                        .setValue(contacts);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
